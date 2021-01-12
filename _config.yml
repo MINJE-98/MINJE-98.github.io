@@ -1,11 +1,11 @@
-name: 
-author: 
+name: 조민제
+author: 조민제
 url: MINJE-98.github.io
 baseurl: MINJE-98.github.io
 resume_site: 
 description: 
-github_username: 
-github: 
+github_username: MINJE-98
+github: https://github.com/MINJE-98
 plugins: [jekyll-paginate]
 permalink: /:year-:month-:day-:title
 paginate: 12
