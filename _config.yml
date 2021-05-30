@@ -1,22 +1,16 @@
-name: MINJE CHO
-author: MINJE CHO
-url: MINJE-98.github.io
-baseurl: 
-resume_site: 
-description: 
-github_username: MINJE-98
+# User config
+author: "minje"
+tagline: "Pineapple Certfied Jekyll Theme"
+description: "In 1493, explorer Christopher Columbus found pineapples on Guadeloupe Island in the Caribbean. Pineapple on pizza soon followed..."
+keywords: "Pineapple, Pineapple Pizza, Pineapple House"
+email: "minje9801@gmail.com"
+linkedin: "https://www.linkedin.com/"
+twitter: "https://twitter.com/"
 github: https://github.com/MINJE-98
-plugins: [jekyll-paginate]
-permalink: /:year-:month-:day-:title
-paginate: 12
-paginate_path: "/page/:num/"
-exclude: ['README.md', 'Gemfile.lock', 'Gemfile', 'Rakefile']
+
+# Site config
+baseurl: "/pineapple"
 highlighter: rouge
-markdown: kramdown
-comments :
-  gitalk :
-    clientID : 
-    clientSecret : 
-    repo : 
-    owner : 
-    admin : 
+sass:
+  sass_dir: assets/scss
+  style: compressed
