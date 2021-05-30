@@ -1,57 +1,44 @@
 ---
-layout: default
 ---
-
-<div class="main-content index-page clearfix">
-    <div class="post-lists">
-        <div class="post-lists-body">
-            {% for post in paginator.posts %}
-            <div class="post-list-item">
-                <div class="post-list-item-container">
-                    <div class="item-thumb bg-deepgrey" style="background-image:url({% if post.thumbnail %}{{ post.thumbnail }}{% else %}{{ '/style/image/thumbnail.png' | prepend: site.baseurl }}{% endif %});"></div>
-                    <a href="{{ post.url | prepend: site.baseurl }}">
-                        <div class="item-desc">
-                            <p>{{ post.content | strip_html | strip_newlines | truncate: 128 }} </p>
-                        </div>
-                    </a>
-                    <div class="item-slant reverse-slant bg-deepgrey"></div>
-                    <div class="item-slant"></div>
-                    <div class="item-label">
-                        <div class="item-title"><a href="{{ post.url | prepend: site.baseurl }}">{{ post.title }}</a>
-                        <br />
-                        {{ post.date | date: "%b %d, %Y" }}
-                        </div>
-                        <div class="item-meta clearfix">
-                            <div class="item-meta-ico {% if post.icon %}bg-ico-{{ post.icon }}{% endif %}" style="background: url({{ '/style/image/bg-ico.png' | prepend: site.baseurl }}) no-repeat;background-size: 40px auto;"></div>
-                            <div class="item-meta-cat">
-                                <a href="javascript:void(0);">{{ post.category }}</a>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-
-
-    {% if paginator.total_pages > 1 %}
-    <div class="lists-navigator clearfix">
-        <ol class="page-navigator">
-            {% if paginator.previous_page %}
-            <li class="prev"><a href="{{ paginator.previous_page_path | relative_url }}">←</a></li>
-            {% endif %}
-            {% for page in (1..paginator.total_pages) %}
-            <li {% if page==paginator.page %} class="current" {% endif %}>
-                <a href="{% if page == 1 %}{{  '/' | prepend: site.baseurl }}{% else %}{{ site.paginate_path | relative_url | replace: ':num', page }}{% endif %}">{{
-                    page }}</a>
-            </li>
-            {% endfor %}
-            {% if paginator.next_page %}
-            <li class="next"><a href="{{ paginator.next_page_path | relative_url }}">→</a></li>
-            {% endif %}
-        </ol>
-    </div>
-    {% endif %}
-
-</div>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>{{ site.author }} / {{ site.tagline }}</title>
+	<meta name="author" content="{{ site.author }}">
+	<meta name="description" content="{{ site.description }}">
+	<meta name="keywords" content="{{ site.keywords }}">
+	{% include head.html %}
+</head>
+<body>
+	{% include header.html %}
+	<main class="content">
+		<section class="intro">
+			<div class="container">
+				<h2>About me.</h2>
+				<p>{{ site.description }}</p>
+			</div>
+		</section>
+		<section class="projects">
+			<div class="container">
+				<h2>Projects I have worked on.</h2>
+				<ul class="projects-list">
+					{% for item in site.categories.projects reversed %}
+						<li>
+							<a href="{{ item.url | prepend: site.baseurl }}">
+								<div class="img-wrapper">
+									<img src="{{ item.project.logo | prepend: site.baseurl }}" alt="{{ item.project.title }}" />
+								</div>
+								<span class="h2">{{ item.project.type }}</span>
+								<h3>{{ item.project.title }}</h3>
+							</a>
+						</li>
+					{% endfor %}
+				</ul>
+			</div>
+		</section>
+	</main>
+	{% include footer.html %}
+	<script src="{{ "/assets/scripts/vendor/scrollreveal.min.js" | prepend: site.baseurl }}"></script>
+	<script src="{{ "/assets/scripts/home.js" | prepend: site.baseurl }}"></script>
+</body>
+</html>
