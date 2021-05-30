@@ -9,7 +9,7 @@ email: "minje9801@gmail.com"
 github: https://github.com/MINJE-98
 
 # Site config
-baseurl: "https://minje-98.github.io"
+baseurl: ""
 highlighter: rouge
 sass:
   sass_dir: assets/scss

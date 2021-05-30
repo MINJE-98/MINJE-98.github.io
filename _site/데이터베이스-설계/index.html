@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<title>MINJE-98.github.io / 데이터베이스 설계</title>
+	<meta name="author" content="MINJE-98.github.io">
+	<meta name="description" content="테이블이 너무 많이 나올거같아. 차근차근 하나씩 따라 해보기로 했다.      객개념적 설계로 E-R 다이어그램 만들기    객체와 속성을 추출하기    요구사항    우리 어플은은 회원가입하려면 유저아이디, 이름, 이메일, 프로필사진(SNS로그인)가 있어야 한다. 데이터 저장시, facebook의 accesstoken이 저장되고, 가입일, 마지막로그인일이 기록된다.    유저는 여러개의 팀을 가질 수 있는데, 팀은 팀아이디, 이름 필수로 입력해야 하며, 팀을 생성할 시 팀 생성일자가 기록된다.    팀을 생성할 때 팀맴버가 생성되며, 팀 멤버는  id, 팀아이디, 유저아이디, 유저상태코드으로    또한 팀에 가입할 수 있는데, 팁 가입신청시 팀맴버가 생성되고  id, 팀아이디, 유저아이디, 유저상태코드는 join 설정되어 admin인 유저가 승인을 해야 팀에 접근 할 수 있다.    팀맴버는 팀이 없으면 존재할 수 없다.    팀에 아이템들을 추가할 수 있다. 아이템은 아이템아이디, 팀아이디, 바코드, 이름, 사용횟수, 이미지URL의정보를 저장하고 있다.    또한 아이템에 태그를 붙일 수 있는다. 태그에 대한 데이터는 태그아이디, 팀아이디, 태그이름이고 태그가 없을 시 팀의 유저 누구든지 생성이 가능하다.    위의 요구사항을 따라 개체와 속성을 구별 해보았다.    개체 속성 추출        개체 간의 관계 추출    개체와 속성을 구별했으니 개체 간의 관계를 추출해보자.    요구사항    우리 어플은은 회원가입하려면 유저아이디, 이름, 이메일, 프로필사진(SNS로그인)가 있어야 한다. 데이터 저장시, facebook의 accesstoken이 저장되고, 가입일, 마지막로그인일이 기록된다.    유저는 여러개의 팀을 가질 수 있는데, 팀은 팀아이디, 이름 필수로 입력해야 하며, 팀을 생성할 시 팀 생성일자가 기록된다.    팀을 생성할 때 팀맴버가 생성되며, 팀 멤버는  id, 팀아이디, 유저아이디, 유저상태코드으로    또한 팀에 가입할 수 있는데, 팁 가입신청시 팀맴버가 생성되고  id, 팀아이디, 유저아이디, 유저상태코드는 join 설정되어 admin인 유저가 승인을 해야 팀에 접근 할 수 있다.    팀맴버는 팀이 없으면 존재할 수 없다.    팀에 아이템들을 추가할 수 있다. 아이템은 아이템아이디, 팀아이디, 바코드, 이름, 사용횟수, 이미지URL의정보를 저장하고 있다.    또한 아이템에 태그를 붙일 수 있는다. 태그에 대한 데이터는 태그아이디, 팀아이디, 태그이름이고 태그가 없을 시 팀의 유저 누구든지 생성이 가능하다.    개체 간의 관계 추출        ER 다이어그램            테이블 쿼리  -- 테이블 순서는 관계를 고려하여 한 번에 실행해도 에러가 발생하지 않게 정렬되었습니다.-- teams Table Create SQLCREATE TABLE teams(    `tuid`        VARCHAR(6)       NOT NULL  UNIQUE  COMMENT '팀UID',     `name`        VARCHAR(20)      NOT NULL    COMMENT '팀이름',     -- `profileURL`  VARCHAR(1000)    NULL        COMMENT '팀 프로필 사진',     `makedate`    DATETIME         NOT NULL    COMMENT '팀 생성일자',     PRIMARY KEY (tuid));ALTER TABLE teams COMMENT '팀';-- 팀UID는 오직 하나의 값만 존재할 수 있다.-- users Table Create SQLCREATE TABLE users(    `uuid`        VARCHAR(100)     NOT NULL    COMMENT '유저UID',     `email`        VARCHAR(100)     NOT NULL    COMMENT '유저이메일',    `name`        VARCHAR(100)     NOT NULL    COMMENT '유저이름',      `profileURL`  VARCHAR(1000)    NULL        COMMENT '유저 프로필 사진',    `lastlogindate` DATETIME    NOT NULL    COMMENT '마지막 로그인날짜';    `registerdate` DATETIME    NOT NULL    COMMENT '가입 날짜';    PRIMARY KEY (uuid));ALTER TABLE users COMMENT '유저';-- itmes Table Create SQL-- CREATE TABLE itmes-- (--     `barcode`  VARCHAR(30)         NOT NULL  UNIQUE  COMMENT '바코드(FK)', --     `name`     VARCHAR(100)    NOT NULL    COMMENT '상품명', --     PRIMARY KEY (barcode)-- );-- ALTER TABLE itmes COMMENT '아이템';-- -- 아이템의 바코드는 상품당 1개만 존재할 수 있다.-- itemimages Table Create SQLCREATE TABLE goods(    `goodsid`   INT              NOT NULL   AUTO_INCREMENT COMMENT '아이템 아이디',     `tuid`      VARCHAR(6)       DEFAULT NULL           COMMENT '팀UID(FK)',     `barcode`   VARCHAR(30)      NOT NULL   COMMENT '바코드',     `name`   VARCHAR(100)      NOT NULL   COMMENT '상품 명',     `imageURL`  VARCHAR(1000)    NOT NULL    COMMENT '이미지URL',     `usecount`  INT              NOT NULL  DEFAULT 0  COMMENT '사용횟수',     PRIMARY KEY (goodsid));ALTER TABLE goods COMMENT '아이템이미지';/* * 바코드 없이 존재 할 수 없다.* 팀없이 존재 할 수 있다.*/ALTER TABLE goods    ADD CONSTRAINT FK_goods_tuid_teams_tuid FOREIGN KEY (tuid)        REFERENCES teams (tuid) ON DELETE SET DEFAULT ON UPDATE CASCADE-- 참조 테이블 [teams]-- [teams]이 삭제되었을 경우 =&gt; 기본값으로 귀속됩니다.(NULL)-- [teams]이 업데이트될 경우 =&gt; 부모와 같이 업데이트 됩니다.-- tags Table Create SQLCREATE TABLE tags(    `tagid`  INT             NOT NULL   AUTO_INCREMENT COMMENT '태그아이디',     `tuid`   VARCHAR(6)      NOT NULL    COMMENT '팀UID(FK)',     `name`   VARCHAR(100)    NOT NULL    COMMENT '태그이름',     PRIMARY KEY (tagid));ALTER TABLE tags COMMENT '태그';/* * 태그는 팀이 존재하지 않으면 존재 할 수 없다.*/ALTER TABLE tags    ADD CONSTRAINT FK_tags_tuid_teams_tuid FOREIGN KEY (tuid)        REFERENCES teams (tuid) ON DELETE CASCADE ON UPDATE CASCADE;-- 참조 테이블 [teams]-- [teams]이 삭제 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.-- [teams]이 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.-- deadline Table Create SQLCREATE TABLE deadline(    `id`        INT           NOT NULL   AUTO_INCREMENT COMMENT '유통기한아이디',     `tuid`      VARCHAR(6)    NOT NULL    COMMENT '팀UID(FK)',     `goodsid`   INT           DEFAULT NULL COMMENT '아이템 아이디(FK)',     `tagid`     INT           DEFAULT NULL COMMENT '태그 아이디(FK)',     `expdate`  DATETIME      NOT NULL    COMMENT '유통기한',     `uploaddate`    DATETIME      NOT NULL    COMMENT '업로드 일자',     PRIMARY KEY (id));ALTER TABLE deadline COMMENT '유통기한';/* * 유통기한은 태그와, 이미지를 등록을 해도되고 안해도되지만.* 팀이없다면 존재할 수 없다.*/ALTER TABLE deadline    ADD CONSTRAINT FK_deadline_tuid_teams_tuid FOREIGN KEY (tuid)        REFERENCES teams (tuid) ON DELETE CASCADE ON UPDATE CASCADE;-- 참조 테이블 [teams]-- [teams]가 삭제 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.-- [teams]가 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.ALTER TABLE deadline    ADD CONSTRAINT FK_deadline_goodsid_goods_goodsid FOREIGN KEY (goodsid)        REFERENCES goods (goodsid) ON DELETE SET null ON UPDATE CASCADE;-- 참조 테이블 [itemimages]-- [itemimages]가 삭제 되었을 경우 =&gt; 기본값으로 귀속됩니다. (NULL)-- [itemimages]가 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.ALTER TABLE deadline    ADD CONSTRAINT FK_deadline_tagid_tags_tagid FOREIGN KEY (tagid)        REFERENCES tags (tagid) ON DELETE SET DEFAULT ON UPDATE CASCADE;-- 참조 테이블 [tags]-- [tags]가 삭제 되었을 경우 =&gt; 기본값으로 귀속됩니다. (NULL)-- [tags]가 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.-- teamembers Table Create SQLCREATE TABLE teamembers(    `id`     INT             NOT NULL   AUTO_INCREMENT COMMENT '아이디',     `uuid`   VARCHAR(100)    NOT NULL    COMMENT '유저UID(FK)',     `tuid`   VARCHAR(6)      NOT NULL    COMMENT '팀UID(FK)',     `state`  INT             NOT NULL    COMMENT '유저상태',     PRIMARY KEY (id));ALTER TABLE teamembers COMMENT '팀맴버';ALTER TABLE teamembers    ADD CONSTRAINT FK_teamembers_uuid_users_uuid FOREIGN KEY (uuid)        REFERENCES users (uuid) ON DELETE CASCADE ON UPDATE CASCADE;-- 참조 테이블 [users]-- [users]가 삭제 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.-- [users]가 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.ALTER TABLE teamembers    ADD CONSTRAINT FK_teamembers_tuid_teams_tuid FOREIGN KEY (tuid)        REFERENCES teams (tuid) ON DELETE CASCADE ON UPDATE CASCADE;-- 참조 테이블 [teams]-- [teams]가 삭제 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.-- [teams]가 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.mysql">
+	<meta name="keywords" content="MySQL">
+	<meta charset="UTF-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="robots" content="index,follow">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
+<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
+<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
+<link rel="manifest" href="/manifest.json">
+<link rel="mask-icon" href="/My_flame.svg" color="#5bbad5">
+<meta name="theme-color" content="#ffffff">
+<link rel="stylesheet" href="/assets/css/style.css">
+</head>
+<body>
+	<header class="header">
+	<div class="container">
+		<h1 class="logo">
+			<a title="MINJE-98.github.io" href="/">MINJE-98.github.io</a>
+		</h1>
+	</div>
+</header>
+	<main class="content">
+		<section class="project">
+			<div class="container">
+				<article>
+					<span class="h2">Project Title</span>
+					<h1>
+						<a href="" target="_blank" title="데이터베이스 설계" rel="nofollow">데이터베이스 설계</a>
+					</h1>
+					<span class="h2">Role</span>
+					<p>테이블이 너무 많이 나올거같아. 차근차근 하나씩 따라 해보기로 했다.</p>
+
+<ol>
+  <li>
+    <p>객개념적 설계로 E-R 다이어그램 만들기</p>
+
+    <p>객체와 속성을 추출하기</p>
+
+    <p>요구사항</p>
+
+    <p>우리 어플은은 회원가입하려면 유저아이디, 이름, 이메일, 프로필사진(SNS로그인)가 있어야 한다.
+ 데이터 저장시, facebook의 accesstoken이 저장되고, 가입일, 마지막로그인일이 기록된다.</p>
+
+    <p>유저는 여러개의 팀을 가질 수 있는데, 팀은 팀아이디, 이름 필수로 입력해야 하며, 팀을 생성할 시 팀 생성일자가 기록된다.</p>
+
+    <p>팀을 생성할 때 팀맴버가 생성되며, 팀 멤버는  id, 팀아이디, 유저아이디, 유저상태코드으로</p>
+
+    <p>또한 팀에 가입할 수 있는데, 팁 가입신청시 팀맴버가 생성되고  id, 팀아이디, 유저아이디, 유저상태코드는 join 설정되어 admin인 유저가 승인을 해야 팀에 접근 할 수 있다.</p>
+
+    <p>팀맴버는 팀이 없으면 존재할 수 없다.</p>
+
+    <p>팀에 아이템들을 추가할 수 있다. 아이템은 아이템아이디, 팀아이디, 바코드, 이름, 사용횟수, 이미지URL의정보를 저장하고 있다.</p>
+
+    <p>또한 아이템에 태그를 붙일 수 있는다. 태그에 대한 데이터는 태그아이디, 팀아이디, 태그이름이고 태그가 없을 시 팀의 유저 누구든지 생성이 가능하다.</p>
+
+    <p>위의 요구사항을 따라 개체와 속성을 구별 해보았다.</p>
+
+    <p><a href="https://www.notion.so/1b1317a85486426885b9974aef348a45">개체 속성 추출</a></p>
+  </li>
+  <li>
+    <p>개체 간의 관계 추출</p>
+
+    <p>개체와 속성을 구별했으니 개체 간의 관계를 추출해보자.</p>
+
+    <p>요구사항</p>
+
+    <p>우리 어플은은 회원가입하려면 유저아이디, 이름, 이메일, 프로필사진(SNS로그인)가 있어야 한다.
+ 데이터 저장시, facebook의 accesstoken이 저장되고, 가입일, 마지막로그인일이 기록된다.</p>
+
+    <p>유저는 여러개의 팀을 가질 수 있는데, 팀은 팀아이디, 이름 필수로 입력해야 하며, 팀을 생성할 시 팀 생성일자가 기록된다.</p>
+
+    <p>팀을 생성할 때 팀맴버가 생성되며, 팀 멤버는  id, 팀아이디, 유저아이디, 유저상태코드으로</p>
+
+    <p>또한 팀에 가입할 수 있는데, 팁 가입신청시 팀맴버가 생성되고  id, 팀아이디, 유저아이디, 유저상태코드는 join 설정되어 admin인 유저가 승인을 해야 팀에 접근 할 수 있다.</p>
+
+    <p>팀맴버는 팀이 없으면 존재할 수 없다.</p>
+
+    <p>팀에 아이템들을 추가할 수 있다. 아이템은 아이템아이디, 팀아이디, 바코드, 이름, 사용횟수, 이미지URL의정보를 저장하고 있다.</p>
+
+    <p>또한 아이템에 태그를 붙일 수 있는다. 태그에 대한 데이터는 태그아이디, 팀아이디, 태그이름이고 태그가 없을 시 팀의 유저 누구든지 생성이 가능하다.</p>
+
+    <p><a href="https://www.notion.so/58291dece1b74dffa3022aae17ab78bc">개체 간의 관계 추출</a></p>
+  </li>
+  <li>
+    <p>ER 다이어그램</p>
+
+    <p><img src="https://s3-us-west-2.amazonaws.com/secure.notion-static.com/cf79355e-2a0d-49c8-a0fd-557d642a4795/Untitled_Diagram_(1).jpg](https://s3-us-west-2.amazonaws.com/secure.notion-static.com/cf79355e-2a0d-49c8-a0fd-557d642a4795/Untitled_Diagram_(1).jpg" /></p>
+  </li>
+  <li>
+    <p>테이블 쿼리</p>
+  </li>
+</ol>
+
+<div class="language-sql highlighter-rouge"><div class="highlight"><pre class="highlight"><code><span class="c1">-- 테이블 순서는 관계를 고려하여 한 번에 실행해도 에러가 발생하지 않게 정렬되었습니다.</span>
+
+<span class="c1">-- teams Table Create SQL</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">teams</span>
+<span class="p">(</span>
+    <span class="nv">`tuid`</span>        <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>       <span class="k">NOT</span> <span class="k">NULL</span>  <span class="k">UNIQUE</span>  <span class="k">COMMENT</span> <span class="s1">'팀UID'</span><span class="p">,</span> 
+    <span class="nv">`name`</span>        <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">20</span><span class="p">)</span>      <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'팀이름'</span><span class="p">,</span> 
+    <span class="c1">-- `profileURL`  VARCHAR(1000)    NULL        COMMENT '팀 프로필 사진', </span>
+    <span class="nv">`makedate`</span>    <span class="n">DATETIME</span>         <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'팀 생성일자'</span><span class="p">,</span> 
+    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">tuid</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">teams</span> <span class="k">COMMENT</span> <span class="s1">'팀'</span><span class="p">;</span>
+
+<span class="c1">-- 팀UID는 오직 하나의 값만 존재할 수 있다.</span>
+
+<span class="c1">-- users Table Create SQL</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">users</span>
+<span class="p">(</span>
+    <span class="nv">`uuid`</span>        <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>     <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'유저UID'</span><span class="p">,</span> 
+    <span class="nv">`email`</span>        <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>     <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'유저이메일'</span><span class="p">,</span>
+    <span class="nv">`name`</span>        <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>     <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'유저이름'</span><span class="p">,</span>  
+    <span class="nv">`profileURL`</span>  <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>    <span class="k">NULL</span>        <span class="k">COMMENT</span> <span class="s1">'유저 프로필 사진'</span><span class="p">,</span>
+    <span class="nv">`lastlogindate`</span> <span class="n">DATETIME</span>    <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'마지막 로그인날짜'</span><span class="p">;</span>
+    <span class="nv">`registerdate`</span> <span class="n">DATETIME</span>    <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'가입 날짜'</span><span class="p">;</span>
+    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">users</span> <span class="k">COMMENT</span> <span class="s1">'유저'</span><span class="p">;</span>
+
+<span class="c1">-- itmes Table Create SQL</span>
+<span class="c1">-- CREATE TABLE itmes</span>
+<span class="c1">-- (</span>
+<span class="c1">--     `barcode`  VARCHAR(30)         NOT NULL  UNIQUE  COMMENT '바코드(FK)', </span>
+<span class="c1">--     `name`     VARCHAR(100)    NOT NULL    COMMENT '상품명', </span>
+<span class="c1">--     PRIMARY KEY (barcode)</span>
+<span class="c1">-- );</span>
+
+<span class="c1">-- ALTER TABLE itmes COMMENT '아이템';</span>
+
+<span class="c1">-- -- 아이템의 바코드는 상품당 1개만 존재할 수 있다.</span>
+
+<span class="c1">-- itemimages Table Create SQL</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">goods</span>
+<span class="p">(</span>
+    <span class="nv">`goodsid`</span>   <span class="n">INT</span>              <span class="k">NOT</span> <span class="k">NULL</span>   <span class="n">AUTO_INCREMENT</span> <span class="k">COMMENT</span> <span class="s1">'아이템 아이디'</span><span class="p">,</span> 
+    <span class="nv">`tuid`</span>      <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>       <span class="k">DEFAULT</span> <span class="k">NULL</span>           <span class="k">COMMENT</span> <span class="s1">'팀UID(FK)'</span><span class="p">,</span> 
+    <span class="nv">`barcode`</span>   <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">30</span><span class="p">)</span>      <span class="k">NOT</span> <span class="k">NULL</span>   <span class="k">COMMENT</span> <span class="s1">'바코드'</span><span class="p">,</span> 
+    <span class="nv">`name`</span>   <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>      <span class="k">NOT</span> <span class="k">NULL</span>   <span class="k">COMMENT</span> <span class="s1">'상품 명'</span><span class="p">,</span> 
+    <span class="nv">`imageURL`</span>  <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">1000</span><span class="p">)</span>    <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'이미지URL'</span><span class="p">,</span> 
+    <span class="nv">`usecount`</span>  <span class="n">INT</span>              <span class="k">NOT</span> <span class="k">NULL</span>  <span class="k">DEFAULT</span> <span class="mi">0</span>  <span class="k">COMMENT</span> <span class="s1">'사용횟수'</span><span class="p">,</span> 
+    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">goodsid</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">goods</span> <span class="k">COMMENT</span> <span class="s1">'아이템이미지'</span><span class="p">;</span>
+
+<span class="cm">/* 
+* 바코드 없이 존재 할 수 없다.
+* 팀없이 존재 할 수 있다.
+*/</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">goods</span>
+    <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">FK_goods_tuid_teams_tuid</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">tuid</span><span class="p">)</span>
+        <span class="k">REFERENCES</span> <span class="n">teams</span> <span class="p">(</span><span class="n">tuid</span><span class="p">)</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">SET</span> <span class="k">DEFAULT</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CASCADE</span>
+<span class="c1">-- 참조 테이블 [teams]</span>
+<span class="c1">-- [teams]이 삭제되었을 경우 =&gt; 기본값으로 귀속됩니다.(NULL)</span>
+<span class="c1">-- [teams]이 업데이트될 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+
+<span class="c1">-- tags Table Create SQL</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">tags</span>
+<span class="p">(</span>
+    <span class="nv">`tagid`</span>  <span class="n">INT</span>             <span class="k">NOT</span> <span class="k">NULL</span>   <span class="n">AUTO_INCREMENT</span> <span class="k">COMMENT</span> <span class="s1">'태그아이디'</span><span class="p">,</span> 
+    <span class="nv">`tuid`</span>   <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>      <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'팀UID(FK)'</span><span class="p">,</span> 
+    <span class="nv">`name`</span>   <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>    <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'태그이름'</span><span class="p">,</span> 
+    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">tagid</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">tags</span> <span class="k">COMMENT</span> <span class="s1">'태그'</span><span class="p">;</span>
+<span class="cm">/* 
+* 태그는 팀이 존재하지 않으면 존재 할 수 없다.
+*/</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">tags</span>
+    <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">FK_tags_tuid_teams_tuid</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">tuid</span><span class="p">)</span>
+        <span class="k">REFERENCES</span> <span class="n">teams</span> <span class="p">(</span><span class="n">tuid</span><span class="p">)</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">CASCADE</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CASCADE</span><span class="p">;</span>
+<span class="c1">-- 참조 테이블 [teams]</span>
+<span class="c1">-- [teams]이 삭제 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+<span class="c1">-- [teams]이 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+
+<span class="c1">-- deadline Table Create SQL</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">deadline</span>
+<span class="p">(</span>
+    <span class="nv">`id`</span>        <span class="n">INT</span>           <span class="k">NOT</span> <span class="k">NULL</span>   <span class="n">AUTO_INCREMENT</span> <span class="k">COMMENT</span> <span class="s1">'유통기한아이디'</span><span class="p">,</span> 
+    <span class="nv">`tuid`</span>      <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>    <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'팀UID(FK)'</span><span class="p">,</span> 
+    <span class="nv">`goodsid`</span>   <span class="n">INT</span>           <span class="k">DEFAULT</span> <span class="k">NULL</span> <span class="k">COMMENT</span> <span class="s1">'아이템 아이디(FK)'</span><span class="p">,</span> 
+    <span class="nv">`tagid`</span>     <span class="n">INT</span>           <span class="k">DEFAULT</span> <span class="k">NULL</span> <span class="k">COMMENT</span> <span class="s1">'태그 아이디(FK)'</span><span class="p">,</span> 
+    <span class="nv">`expdate`</span>  <span class="n">DATETIME</span>      <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'유통기한'</span><span class="p">,</span> 
+    <span class="nv">`uploaddate`</span>    <span class="n">DATETIME</span>      <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'업로드 일자'</span><span class="p">,</span> 
+    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">deadline</span> <span class="k">COMMENT</span> <span class="s1">'유통기한'</span><span class="p">;</span>
+
+<span class="cm">/* 
+* 유통기한은 태그와, 이미지를 등록을 해도되고 안해도되지만.
+* 팀이없다면 존재할 수 없다.
+*/</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">deadline</span>
+    <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">FK_deadline_tuid_teams_tuid</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">tuid</span><span class="p">)</span>
+        <span class="k">REFERENCES</span> <span class="n">teams</span> <span class="p">(</span><span class="n">tuid</span><span class="p">)</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">CASCADE</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CASCADE</span><span class="p">;</span>
+<span class="c1">-- 참조 테이블 [teams]</span>
+<span class="c1">-- [teams]가 삭제 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+<span class="c1">-- [teams]가 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">deadline</span>
+    <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">FK_deadline_goodsid_goods_goodsid</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">goodsid</span><span class="p">)</span>
+        <span class="k">REFERENCES</span> <span class="n">goods</span> <span class="p">(</span><span class="n">goodsid</span><span class="p">)</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">SET</span> <span class="k">null</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CASCADE</span><span class="p">;</span>
+<span class="c1">-- 참조 테이블 [itemimages]</span>
+<span class="c1">-- [itemimages]가 삭제 되었을 경우 =&gt; 기본값으로 귀속됩니다. (NULL)</span>
+<span class="c1">-- [itemimages]가 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">deadline</span>
+    <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">FK_deadline_tagid_tags_tagid</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">tagid</span><span class="p">)</span>
+        <span class="k">REFERENCES</span> <span class="n">tags</span> <span class="p">(</span><span class="n">tagid</span><span class="p">)</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">SET</span> <span class="k">DEFAULT</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CASCADE</span><span class="p">;</span>
+<span class="c1">-- 참조 테이블 [tags]</span>
+<span class="c1">-- [tags]가 삭제 되었을 경우 =&gt; 기본값으로 귀속됩니다. (NULL)</span>
+<span class="c1">-- [tags]가 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+
+<span class="c1">-- teamembers Table Create SQL</span>
+<span class="k">CREATE</span> <span class="k">TABLE</span> <span class="n">teamembers</span>
+<span class="p">(</span>
+    <span class="nv">`id`</span>     <span class="n">INT</span>             <span class="k">NOT</span> <span class="k">NULL</span>   <span class="n">AUTO_INCREMENT</span> <span class="k">COMMENT</span> <span class="s1">'아이디'</span><span class="p">,</span> 
+    <span class="nv">`uuid`</span>   <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">100</span><span class="p">)</span>    <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'유저UID(FK)'</span><span class="p">,</span> 
+    <span class="nv">`tuid`</span>   <span class="n">VARCHAR</span><span class="p">(</span><span class="mi">6</span><span class="p">)</span>      <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'팀UID(FK)'</span><span class="p">,</span> 
+    <span class="nv">`state`</span>  <span class="n">INT</span>             <span class="k">NOT</span> <span class="k">NULL</span>    <span class="k">COMMENT</span> <span class="s1">'유저상태'</span><span class="p">,</span> 
+    <span class="k">PRIMARY</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">id</span><span class="p">)</span>
+<span class="p">);</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">teamembers</span> <span class="k">COMMENT</span> <span class="s1">'팀맴버'</span><span class="p">;</span>
+
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">teamembers</span>
+    <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">FK_teamembers_uuid_users_uuid</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">uuid</span><span class="p">)</span>
+        <span class="k">REFERENCES</span> <span class="n">users</span> <span class="p">(</span><span class="n">uuid</span><span class="p">)</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">CASCADE</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CASCADE</span><span class="p">;</span>
+<span class="c1">-- 참조 테이블 [users]</span>
+<span class="c1">-- [users]가 삭제 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+<span class="c1">-- [users]가 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+<span class="k">ALTER</span> <span class="k">TABLE</span> <span class="n">teamembers</span>
+    <span class="k">ADD</span> <span class="k">CONSTRAINT</span> <span class="n">FK_teamembers_tuid_teams_tuid</span> <span class="k">FOREIGN</span> <span class="k">KEY</span> <span class="p">(</span><span class="n">tuid</span><span class="p">)</span>
+        <span class="k">REFERENCES</span> <span class="n">teams</span> <span class="p">(</span><span class="n">tuid</span><span class="p">)</span> <span class="k">ON</span> <span class="k">DELETE</span> <span class="k">CASCADE</span> <span class="k">ON</span> <span class="k">UPDATE</span> <span class="k">CASCADE</span><span class="p">;</span>
+<span class="c1">-- 참조 테이블 [teams]</span>
+<span class="c1">-- [teams]가 삭제 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+<span class="c1">-- [teams]가 업데이트 되었을 경우 =&gt; 부모와 같이 업데이트 됩니다.</span>
+</code></pre></div></div>
+
+<p><a href="https://www.notion.so/mysql-e0a7a476390c4ecaba096e7a532076f7">mysql</a></p>
+
+					<div class="project-meta">
+						<span class="h2">Technologies</span>
+						<p>NOIMAGE</p>
+						<span class="h2">Agency</span>
+						<p><a title="조민제" href="https://github.com/MINJE-98" target="_blank" rel="nofollow">조민제</a></p>
+						<span class="h2">Year</span>
+						<p>2020</p>
+					</div>
+				</article>
+				<!-- <aside>
+					<ul>
+						
+						
+						<li></li>
+						
+					</ul>
+				</aside> -->
+			</div>
+		</section>
+		<section class="project-navigation">
+			<div class="container">
+				
+				<a title="Previous Red Pineapple" href="/redpineapple/" class="prev">
+					<span class="h2">Previous</span>
+					<h2>Red Pineapple</h2>
+				</a>
+				
+				
+			</div>
+		</section>
+	</main>
+	<footer class="footer">
+	<div class="container">
+		<section class="contact">
+			<h2>Contact</h2>
+			<a title="minje9801@gmail.com" href="mailto:minje9801@gmail.com">minje9801@gmail.com</a>
+		</section>
+		<section class="follow">
+			<h2>Follow</h2>
+			<ul>
+				<!-- <li><a title="LinkedIn" href="" target="_blank">LinkedIn</a></li>
+				<li><a title="Twitter" href="" target="_blank">Twitter</a></li> -->
+				<li><a title="Github" href="https://github.com/MINJE-98" target="_blank">Github</a></li>
+			</ul>
+		</section>
+	</div>
+</footer>
+	<script src="/assets/scripts/vendor/jquery-1.12.4.min.js"></script>
+	<script src="/assets/scripts/vendor/scrollreveal.min.js"></script>
+	<script src="/assets/scripts/vendor/sticky-kit.min.js"></script>
+	<script src="/assets/scripts/project.js"></script>
+</body>
+</html>

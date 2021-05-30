@@ -156,7 +156,7 @@
 		margin-top: -21rem;
 
 		.article-wrapper {
-			position: absolute;
+			// position: absolute;
 			top: 0;
 			left: 0;
 			right: 0;
@@ -165,7 +165,7 @@
 	}
 
 	.container {
-		max-width: 100%;
+		// max-width: 100%;
 	}
 
 	article {
@@ -173,10 +173,10 @@
 
 		@media (min-width: $breakpoint-medium) {
 			float: right;
-			right: 0;
-			width: 40%;
-			position: absolute;
-			right: 5%;
+			// right: 0;
+			width: 100%;
+			// position: absolute;
+			// right: 5%;
 		}
 	}
 
