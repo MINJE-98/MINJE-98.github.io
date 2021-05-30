@@ -35,6 +35,9 @@
 							<img src="{{ image.url | prepend: site.baseurl }}" alt="{{ image.alt }}" />
 						</li>
 						{% endfor %}
+						{% if page.images == None %}
+						<li></li>
+						{% endif %}
 					</ul>
 				</aside>
 			</div>
