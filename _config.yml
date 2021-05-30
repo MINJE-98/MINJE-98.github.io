@@ -4,8 +4,8 @@ tagline: "Pineapple Certfied Jekyll Theme"
 description: "시작이 반이다..."
 keywords: "TypeScript, BlockChain"
 email: "minje9801@gmail.com"
-linkedin: "https://www.linkedin.com/"
-twitter: "https://twitter.com/"
+# linkedin: "https://www.linkedin.com/"
+# twitter: "https://twitter.com/"
 github: https://github.com/MINJE-98
 
 # Site config
