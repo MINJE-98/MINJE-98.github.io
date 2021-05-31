@@ -2,10 +2,16 @@
 	display: block;
 	margin: 0 auto;
 	max-width: 70em;
+	padding: 3rem 3rem;
+	@include clearfix;
+}
+.container_header {
+	display: block;
+	margin: 0 auto;
+	max-width: 70em;
 	padding: 0 3rem;
 	@include clearfix;
 }
-
 .header {
 	background: $color-white;
 	padding: 3rem 0;
@@ -37,8 +43,8 @@
 	z-index: 1;
 
 	@media (min-width: $breakpoint-medium) {
-		padding: 21rem 0 0;
-		margin-bottom: 23.42rem;
+		padding: 15rem 0 0;
+		margin-bottom: 35.42rem;
 	}
 }
 
