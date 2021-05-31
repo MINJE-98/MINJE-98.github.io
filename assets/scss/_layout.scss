@@ -36,7 +36,7 @@
 .content {
 	background: $color-white;
 	padding: 7rem 0 0;
-	margin-bottom: 31.24rem;
+	margin-bottom: 37.42rem;
 	position: relative;
 	top: 0;
 	left: 0;
@@ -169,7 +169,6 @@
 			bottom: 0;
 		}
 	}
-
 	.container {
 		// max-width: 100%;
 	}
@@ -210,7 +209,7 @@
 	}
 
 	.h2 {
-		margin: 5rem 0 .5rem;
+		margin: 3rem 0 .5rem;
 
 		&:first-of-type {
 			margin-top: 0;
@@ -238,7 +237,7 @@
 
 .project-navigation {
 	background: $color-black;
-	padding: 5rem 0;
+	padding: 2rem 0;
 
 	a {
 		color: $color-white;
@@ -373,3 +372,12 @@
 .follow {
 	margin-bottom: 3rem;
 }
+.sidebar__top {
+    position: fixed;
+    bottom: 1.5em;
+    right: 1em;
+    z-index: 1;
+    width: 100px;
+    height: 100px;
+    color: red;
+  }
