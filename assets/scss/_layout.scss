@@ -153,7 +153,7 @@
 	top: 0;
 
 	@media (min-width: $breakpoint-medium) {
-		margin-top: -21rem;
+		margin-top: -14rem;
 
 		.article-wrapper {
 			// position: absolute;
@@ -204,7 +204,7 @@
 	}
 
 	.h2 {
-		margin: 3rem 0 .5rem;
+		margin: 5rem 0 .5rem;
 
 		&:first-of-type {
 			margin-top: 0;
@@ -348,7 +348,7 @@
 	background: $color-alabaster;
 	bottom: 0;
 	left: 0;
-	padding: 5rem 0;
+	// padding: 5rem 0;
 	position: fixed;
 	right: 0;
 	z-index: -1;

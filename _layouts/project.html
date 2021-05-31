@@ -15,47 +15,17 @@
 				<article>
 					<span class="h2">Project Title</span>
 					<h1>
-						<a href="{{ page.project.url }}" target="_blank" title="{{ page.project.title }}" rel="nofollow">{{ page.project.title }}</a>
+						{{ page.project.title }}
 					</h1>
+					<span class="h2">Date</span>
+					<p>{{ page.agency.year }}-{{page.agency.month}}-{{page.agency.day}}</p>
+					<span class="h2">Technologies</span>
+					<p>{{ page.project.tech }}</p>
 					<span class="h2">Role</span>
 					{{ page.content }}
-					<div class="project-meta">
-						<span class="h2">Technologies</span>
-						<p>{{ page.project.tech }}</p>
-						<span class="h2">Agency</span>
-						<p><a title="{{ page.agency.title }}" href="{{ page.agency.url }}" target="_blank" rel="nofollow">{{ page.agency.title }}</a></p>
-						<span class="h2">Year</span>
-						<p>{{ page.agency.year }}</p>
-					</div>
+					<!-- <div class="project-meta"> -->
+					<!-- </div> -->
 				</article>
-				<!-- <aside>
-					<ul>
-						{% for image in page.images %}
-						<li>
-							<img src="{{ image.url | prepend: site.baseurl }}" alt="{{ image.alt }}" />
-						</li>
-						{% endfor %}
-						{% if page.images == None %}
-						<li></li>
-						{% endif %}
-					</ul>
-				</aside> -->
-			</div>
-		</section>
-		<section class="project-navigation">
-			<div class="container">
-				{% if page.previous and page.previous.categories contains "projects" %}
-				<a title="Previous {{ page.previous.project.title }}" href="{{ page.previous.url | prepend: site.baseurl }}" class="prev">
-					<span class="h2">Previous</span>
-					<h2>{{ page.previous.project.title }}</h2>
-				</a>
-				{% endif %}
-				{% if page.next and page.next.categories contains "projects" %}
-				<a title="Next {{ page.next.project.title }}" href="{{ page.next.url | prepend: site.baseurl }}" class="next">
-					<span class="h2">Next</span>
-					<h2>{{ page.next.project.title }}</h2>
-				</a>
-				{% endif %}
 			</div>
 		</section>
 	</main>
