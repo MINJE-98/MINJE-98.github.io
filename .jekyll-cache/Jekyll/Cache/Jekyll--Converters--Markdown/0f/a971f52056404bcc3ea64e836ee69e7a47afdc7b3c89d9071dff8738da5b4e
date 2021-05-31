@@ -1,44 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-	<title>MINJE-98.github.io / Express, RestAPI 구현-1</title>
-	<meta name="author" content="MINJE-98.github.io">
-	<meta name="description" content="DeadLine을 하면서 Express를 썻었는데 그냥 무작정 써보기만하고 정리를 안했었다.그래서 Express로 RestAPI를 구현하면서 배운 내용을 정리하기로 해보았다.ExpressJS란Express가 nodejs를  가장 많이 사용하고 있는 웹 프레임 워크이다.또한 MVC 형태의 구조를 제공하여, BACKEND로  REST API, SOCKET.IO와 같은 웹앱 기능을 제공한다.Express.js의 작동 방식보통 Express.js에는 메인 파일이라고 하는 진입점이 있다. 메인 파일에서는 다음과 같은 단계를 밟는다.  controller, utils, help, model과 같은 자체적인 모듈을 비롯한 서드파티 의존 모듈을 인클루드한다.  템플릿 엔진과 해당 템플릿 엔진의 파일 확장자와 같은 Express.js 앱 설정을 구성한다.  오류 핸들러, 정적 파일 폴더, 쿠키 및 기타 파서와 같은 미들웨어를 정의한다.  라우팅을 정의한다.  MongoDB, Redis 또는 MySQL과 같은 데이터베이스에 연결한다.  앱을 구동한다.기본 라우팅라우팅은 URL 및 HTTP 요청 메소드인 특정 엔드포인트에 대한 클라이언트 요청에 응답하는 방법을 말한다.라우터마다 하나이상의 핸들러 함수를 가질 수 있다.라우터는 다음과 같은 구조이다.app.METHOD(PATH, HANDLER)라우터는 기본적으로 CRUD를 제공한다. 아래는 CRUD 구현한 예이다.GETapp.get('/', (req, res)=&gt; res.send('get/ Hello!'))POSTapp.post('/', (req, res)=&gt; res.send('PSOT 요청을 받았습니다.'))PUTapp.put('/user', (req, res)=&gt; res.send('/user에서 PUT요청을 받았습니다.'))DELETEapp.delete('/user', (req, res)=&gt; res.send('/user에서 DELETE요청을 받았습니다.'))미들웨어애플리케이션 요청-응답(req-res)주기 중 그 다음의 미들웨어 함수에 대한 엑세스 권한을 갖는 함수이다.미들웨어 함수는 next라는 변수로 표시된다즉, HTTP BODY에 request, response가 존재하는데, 클라이언트가 request를 받고 response를 생성해서 보내주는 과정의 중간에 개발자가 간섭하여 로직생성, req, res 변경 및 흐름제어를 할 수 있다.app.use()const auth = require("/auth") // #1app.use("/auth", auth) // #2app.use(cookieParser())) // #3애플리케이션 단계에서 URL을 분리하고express.router()router.get('/', (req, res, next)=&gt; {	console.log(req);	res.send('respond with a resource');	next());}라우터 단계에서 URL제어를 한다">
-	<meta name="keywords" content="Express, JavaScript">
-	<meta charset="UTF-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="robots" content="index,follow">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
-<link rel="icon" type="image/png" href="/favicon-32x32.png" sizes="32x32">
-<link rel="icon" type="image/png" href="/favicon-16x16.png" sizes="16x16">
-<link rel="manifest" href="/manifest.json">
-<link rel="mask-icon" href="/My_flame.svg" color="#5bbad5">
-<meta name="theme-color" content="#ffffff">
-<link rel="stylesheet" href="/assets/css/style.css">
-</head>
-<body>
-	<header class="header">
-	<div class="container_header">
-		<h1 class="logo">
-			<a title="MINJE-98.github.io" href="/">MINJE-98.github.io</a>
-		</h1>
-	</div>
-</header>
-	<main class="content">
-		<section class="project">
-			<div class="container">
-				<article>
-					<span class="h2">Project Title</span>
-					<h1>
-						Express, RestAPI 구현-1
-					</h1>
-					<span class="h2">Date</span>
-					<p>2020-05-30</p>
-					<span class="h2">Technologies</span>
-					<p>Express, JavaScript</p>
-					<span class="h2">Role</span>
-					<p>DeadLine을 하면서 Express를 썻었는데 그냥 무작정 써보기만하고 정리를 안했었다.</p>
+I"^<p>DeadLine을 하면서 Express를 썻었는데 그냥 무작정 써보기만하고 정리를 안했었다.</p>
 
 <p>그래서 Express로 RestAPI를 구현하면서 배운 내용을 정리하기로 해보았다.</p>
 
@@ -119,45 +79,4 @@
 <span class="p">}</span>
 </code></pre></div></div>
 <p>라우터 단계에서 URL제어를 한다</p>
-
-					<!-- <div class="project-meta"> -->
-					<!-- </div> -->
-				</article>
-			</div>
-		</section>
-	</main>
-	<footer class="footer">
-	
-	<section class="project-navigation">
-		<div class="container">
-			
-			
-		</div>
-		<!-- <aside class="sidebar__top">
-			<a href="#site-nav">
-				<img src="../up-arrow.svg" />
-			</a>
-		</aside> -->=
-	</section>
-	
-	<div class="container">
-		<section class="contact">
-			<h2>Contact</h2>
-			<a title="minje9801@gmail.com" href="mailto:minje9801@gmail.com">minje9801@gmail.com</a>
-		</section>
-		<section class="follow">
-			<h2>Follow</h2>
-			<ul>
-				<!-- <li><a title="LinkedIn" href="" target="_blank">LinkedIn</a></li>
-				<li><a title="Twitter" href="" target="_blank">Twitter</a></li> -->
-				<li><a title="Github" href="https://github.com/MINJE-98" target="_blank">Github</a></li>
-			</ul>
-		</section>
-	</div>
-</footer>
-	<script src="/assets/scripts/vendor/jquery-1.12.4.min.js"></script>
-	<script src="/assets/scripts/vendor/scrollreveal.min.js"></script>
-	<script src="/assets/scripts/vendor/sticky-kit.min.js"></script>
-	<script src="/assets/scripts/project.js"></script>
-</body>
-</html>
+:ET
